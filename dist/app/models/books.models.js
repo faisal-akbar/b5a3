@@ -52,12 +52,14 @@ const bookSchema = new mongoose_1.Schema({
     versionKey: false,
     timestamps: true,
 });
+// Static Method to update the available status based on copies
 bookSchema.static("updateAvailableStatus", function (book) {
     return __awaiter(this, void 0, void 0, function* () {
         book.available = book.copies > 0;
         yield book.save();
     });
 });
+// Query Middleware:
 bookSchema.pre("findOneAndUpdate", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const update = this.getUpdate();
@@ -78,12 +80,14 @@ bookSchema.pre("findOneAndUpdate", function (next) {
         next();
     });
 });
-bookSchema.post("findOneAndDelete", function (doc) {
+// Query Middleware:
+bookSchema.post("findOneAndDelete", function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (doc) {
             // If a book is deleted, ensure that no borrow records reference it
             yield borrow_models_1.Borrow.deleteMany({ book: doc._id });
         }
+        next();
     });
 });
 exports.Book = (0, mongoose_1.model)("Book", bookSchema);

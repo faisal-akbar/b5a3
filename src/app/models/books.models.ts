@@ -46,11 +46,13 @@ const bookSchema = new Schema<IBooks, IBookStaticMethod>(
   }
 );
 
+// Static Method to update the available status based on copies
 bookSchema.static("updateAvailableStatus", async function (book) {
   book.available = book.copies > 0;
   await book.save();
 });
 
+// Query Middleware:
 bookSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() as Record<string, any>;
 
@@ -68,11 +70,13 @@ bookSchema.pre("findOneAndUpdate", async function (next) {
   next();
 });
 
-bookSchema.post("findOneAndDelete", async function (doc) {
+// Query Middleware:
+bookSchema.post("findOneAndDelete", async function (doc, next) {
   if (doc) {
     // If a book is deleted, ensure that no borrow records reference it
     await Borrow.deleteMany({ book: doc._id });
   }
+  next();
 });
 
 export const Book = model<IBooks, IBookStaticMethod>("Book", bookSchema);
