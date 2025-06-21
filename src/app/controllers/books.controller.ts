@@ -45,7 +45,7 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
       return;
     }
 
-    // zod validation for min limit:
+    // zod validation:
   const parseResult = querySchema.safeParse(req.query);
 
   if (!parseResult.success) {
@@ -71,7 +71,7 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Books fetched successfully",
+      message: "Books retrieved successfully",
       data: books,
     });
   } catch (error) {

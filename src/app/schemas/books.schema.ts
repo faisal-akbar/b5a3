@@ -61,7 +61,12 @@ export const bookUpdateSchema = baseBookSchema.partial().superRefine((data, ctx)
 
 
 export const querySchema = z.object({
-  filter: z.string().optional(),
+  filter: z.string().optional().refine((val) => {
+    const validGenres = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]
+    return !val || validGenres.includes(val.toUpperCase());
+  }, {
+    message: "Filter must be one of the predefined genres or empty",
+  }),
   sortBy: z.string().optional(),
   sort: z.enum(["asc", "desc"]),
   limit: z

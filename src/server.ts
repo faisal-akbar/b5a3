@@ -22,12 +22,4 @@ async function main() {
   }
 }
 
-// Only run main() if this file is executed directly (local dev)
-if (require.main === module) {
-  main();
-}
-
-export default async function handler(req: any, res: any) {
-  await connectDB();
-  return app(req, res);
-}
+main();
