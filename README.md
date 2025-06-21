@@ -1,6 +1,26 @@
 ## Library Management API with Express, TypeScript & MongoDB
 This project is a simple library management API built using Express, TypeScript, and MongoDB. It provides endpoints for managing books, and borrow records.
 
+### Live API Entry Point
+You can access the live API at [b5a3.vercel.app](b5a3.vercel.app).
+
+### Features:
+- Type-safe API with TypeScript
+- Input validation using zod for request bodies and query parameters, ensuring data integrity.
+- CRUD operations for books and create borrow records and aggregation summary reports for borrowed books
+- static method for update available status of books
+- pre hook for updating the available status when book copies update to 0 or more than 0.
+- post hook to delete borrow records when book is deleted.
+
+### Technologies Used
+- Node.js
+- Express.js
+- TypeScript
+- zod
+- MongoDB
+- Mongoose
+- dotenv
+
 ### How to Run the Project Locally
 1. Clone the repository:
    ```bash
@@ -21,6 +41,8 @@ This project is a simple library management API built using Express, TypeScript,
     OR
 
     DATABASE_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/library?retryWrites=true&w=majority
+
+    replace <username> and <password> with your MongoDB credentials.
     ```
 5. Start the development server:
     ```bash
@@ -39,14 +61,3 @@ This project is a simple library management API built using Express, TypeScript,
 - **Borrow Records**
   - `POST /api/borrow`: Create a new borrow record
   - `GET GET /api/borrow`: Get Borrowed Books Summary (Using Aggregation)
- 
-### Technologies Used
-- Node.js
-- Express.js
-- TypeScript
-- zod
-- MongoDB
-- Mongoose
-- dotenv
-
-

@@ -91,6 +91,6 @@ export const bookParamsSchema = z.object({
   bookId: z
     .string()
     .refine((val) => isMongoId(val), {
-      message: "Invalid mongo db id format",
+      message: "Invalid mongo db object id format",
     })
 });

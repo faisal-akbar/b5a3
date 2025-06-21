@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const borrowSchema = z.object({
   book: z.string().refine((val) => isMongoId(val), {
-    message: "Invalid mongo db id format",
+    message: "Invalid mongo db object id format",
   }),
   quantity: z
     .number()
