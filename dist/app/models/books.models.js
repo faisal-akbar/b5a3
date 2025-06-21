@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
 const mongoose_1 = require("mongoose");
 const books_schema_1 = require("../schemas/books.schema");
+const borrow_models_1 = require("./borrow.models");
 const bookSchema = new mongoose_1.Schema({
     title: {
         type: String,
@@ -75,6 +76,14 @@ bookSchema.pre("findOneAndUpdate", function (next) {
             }
         }
         next();
+    });
+});
+bookSchema.post("findOneAndDelete", function (doc) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (doc) {
+            // If a book is deleted, ensure that no borrow records reference it
+            yield borrow_models_1.Borrow.deleteMany({ book: doc._id });
+        }
     });
 });
 exports.Book = (0, mongoose_1.model)("Book", bookSchema);

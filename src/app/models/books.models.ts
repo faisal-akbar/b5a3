@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IBooks, IBookStaticMethod } from "../interfaces/books.interface";
 import { GENRES } from "../schemas/books.schema";
+import { Borrow } from "./borrow.models";
 
 const bookSchema = new Schema<IBooks, IBookStaticMethod>(
   {
@@ -52,7 +53,7 @@ bookSchema.static("updateAvailableStatus", async function (book) {
 
 bookSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() as Record<string, any>;
-    
+
   if (update && typeof update.copies !== "undefined") {
     if (update.copies === 0) {
       // Update `available` in the update object directly
@@ -67,5 +68,11 @@ bookSchema.pre("findOneAndUpdate", async function (next) {
   next();
 });
 
+bookSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    // If a book is deleted, ensure that no borrow records reference it
+    await Borrow.deleteMany({ book: doc._id });
+  }
+});
 
 export const Book = model<IBooks, IBookStaticMethod>("Book", bookSchema);
