@@ -9,14 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bookParamsSchema = exports.querySchema = exports.bookUpdateSchema = exports.bookSchema = void 0;
+exports.bookParamsSchema = exports.querySchema = exports.bookUpdateSchema = exports.bookSchema = exports.GENRES = void 0;
 const validator_1 = require("validator");
 const zod_1 = require("zod");
 const books_models_1 = require("../models/books.models");
+exports.GENRES = [
+    "FICTION",
+    "NON_FICTION",
+    "SCIENCE",
+    "HISTORY",
+    "BIOGRAPHY",
+    "FANTASY",
+];
 const baseBookSchema = zod_1.z.object({
     title: zod_1.z.string().min(1, "Title is required"),
     author: zod_1.z.string().min(1, "Author is required"),
-    genre: zod_1.z.enum(["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"], {
+    genre: zod_1.z.enum(exports.GENRES, {
         message: "Genre must be one of the predefined values",
     }),
     isbn: zod_1.z.string().refine((isbn) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,10 +73,9 @@ exports.bookUpdateSchema = baseBookSchema.partial().superRefine((data, ctx) => {
 });
 exports.querySchema = zod_1.z.object({
     filter: zod_1.z.string().optional().refine((val) => {
-        const validGenres = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"];
-        return !val || validGenres.includes(val.toUpperCase());
+        return !val || exports.GENRES.includes(val.toUpperCase());
     }, {
-        message: "Filter must be one of the predefined genres or empty",
+        message: `Filter must be one of the predefined genres: ${exports.GENRES.join(", ")}`,
     }),
     sortBy: zod_1.z.string().optional(),
     sort: zod_1.z.enum(["asc", "desc"]),

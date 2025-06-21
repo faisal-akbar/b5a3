@@ -24,6 +24,7 @@ exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
     if (!parseBody.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseBody.error, req.body);
         res.status(400).json(errorResponse);
+        return;
     }
     try {
         const book = yield books_models_1.Book.create(parseBody.data);
@@ -44,9 +45,9 @@ exports.booksRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
 // Get All Books or by provided query parameters
 exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // If no query parameters are provided, return all books
+        // If no query parameters are provided, return 10 books by default
         if (Object.keys(req.query).length === 0) {
-            const books = yield books_models_1.Book.find({});
+            const books = yield books_models_1.Book.find({}).limit(10);
             res.status(200).json({
                 success: true,
                 message: "Books retrieved successfully",
@@ -59,6 +60,7 @@ exports.booksRoutes.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!parseResult.success) {
             const errorResponse = (0, formatZodError_1.formatZodError)(parseResult.error, req.query);
             res.status(400).json(errorResponse);
+            return;
         }
         const { filter, sortBy, sort, limit = 10 } = parseResult.data;
         // Build query based on filter and sort and limit query parameters
@@ -92,6 +94,7 @@ exports.booksRoutes.get("/:bookId", (req, res) => __awaiter(void 0, void 0, void
     if (!parseParams.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseParams.error, req.params);
         res.status(400).json(errorResponse);
+        return;
     }
     const bookId = req.params.bookId;
     try {
@@ -122,11 +125,13 @@ exports.booksRoutes.put("/:bookId", (req, res) => __awaiter(void 0, void 0, void
     if (!parseParams.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseParams.error, req.params);
         res.status(400).json(errorResponse);
+        return;
     }
     const parseBody = yield books_schema_1.bookUpdateSchema.safeParseAsync(req.body);
     if (!parseBody.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseBody.error, req.body);
         res.status(400).json(errorResponse);
+        return;
     }
     const bookId = req.params.bookId;
     try {
@@ -157,6 +162,7 @@ exports.booksRoutes.delete("/:bookId", (req, res) => __awaiter(void 0, void 0, v
     if (!parseParams.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseParams.error, req.params);
         res.status(400).json(errorResponse);
+        return;
     }
     const bookId = req.params.bookId;
     try {

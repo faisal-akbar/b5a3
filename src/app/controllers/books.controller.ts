@@ -1,6 +1,11 @@
 import express, { Request, Response, Router } from "express";
 import { Book } from "../models/books.models";
-import { bookParamsSchema, bookSchema, bookUpdateSchema, querySchema } from "../schemas/books.schema";
+import {
+  bookParamsSchema,
+  bookSchema,
+  bookUpdateSchema,
+  querySchema,
+} from "../schemas/books.schema";
 import { formatZodError } from "../utils/formatZodError";
 import { IReqQuery } from "../interfaces/books.interface";
 
@@ -12,6 +17,7 @@ booksRoutes.post("/", async (req: Request, res: Response) => {
   if (!parseBody.success) {
     const errorResponse = formatZodError(parseBody.error, req.body);
     res.status(400).json(errorResponse);
+    return;
   }
 
   try {
@@ -30,13 +36,12 @@ booksRoutes.post("/", async (req: Request, res: Response) => {
   }
 });
 
-
 // Get All Books or by provided query parameters
 booksRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    // If no query parameters are provided, return all books
+    // If no query parameters are provided, return 10 books by default
     if (Object.keys(req.query).length === 0) {
-      const books = await Book.find({});
+      const books = await Book.find({}).limit(10);
       res.status(200).json({
         success: true,
         message: "Books retrieved successfully",
@@ -46,12 +51,13 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
     }
 
     // zod validation:
-  const parseResult = querySchema.safeParse(req.query);
+    const parseResult = querySchema.safeParse(req.query);
 
-  if (!parseResult.success) {
-    const errorResponse = formatZodError(parseResult.error, req.query);
-    res.status(400).json(errorResponse);
-  }
+    if (!parseResult.success) {
+      const errorResponse = formatZodError(parseResult.error, req.query);
+      res.status(400).json(errorResponse);
+      return;
+    }
 
     const { filter, sortBy, sort, limit = 10 } = parseResult.data as IReqQuery;
 
@@ -85,12 +91,12 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
 
 // Get Book by ID
 booksRoutes.get("/:bookId", async (req: Request, res: Response) => {
-
-const parseParams = bookParamsSchema.safeParse(req.params);
-    if (!parseParams.success) {
+  const parseParams = bookParamsSchema.safeParse(req.params);
+  if (!parseParams.success) {
     const errorResponse = formatZodError(parseParams.error, req.params);
     res.status(400).json(errorResponse);
-    }
+    return;
+  }
   const bookId = req.params.bookId;
   try {
     const book = await Book.findById(bookId);
@@ -120,12 +126,14 @@ booksRoutes.put("/:bookId", async (req: Request, res: Response) => {
   if (!parseParams.success) {
     const errorResponse = formatZodError(parseParams.error, req.params);
     res.status(400).json(errorResponse);
+    return;
   }
 
   const parseBody = await bookUpdateSchema.safeParseAsync(req.body);
   if (!parseBody.success) {
     const errorResponse = formatZodError(parseBody.error, req.body);
     res.status(400).json(errorResponse);
+    return;
   }
 
   const bookId = req.params.bookId;
@@ -157,32 +165,32 @@ booksRoutes.put("/:bookId", async (req: Request, res: Response) => {
 
 // Delete Book by bookId
 booksRoutes.delete("/:bookId", async (req: Request, res: Response) => {
-    const parseParams = bookParamsSchema.safeParse(req.params);
-    if (!parseParams.success) {
-        const errorResponse = formatZodError(parseParams.error, req.params);
-        res.status(400).json(errorResponse);
-    }
-    
-    const bookId = req.params.bookId;
-    try {
-        const deletedBook = await Book.findByIdAndDelete(bookId);
-        if (!deletedBook) {
-        res.status(404).json({
-            success: false,
-            message: "Book not found",
-        });
-        }
-        res.status(200).json({
-        success: true,
-        message: "Book deleted successfully",
-        data: deletedBook,
-        });
-    } catch (error) {
-        res.status(500).json({
+  const parseParams = bookParamsSchema.safeParse(req.params);
+  if (!parseParams.success) {
+    const errorResponse = formatZodError(parseParams.error, req.params);
+    res.status(400).json(errorResponse);
+    return;
+  }
+
+  const bookId = req.params.bookId;
+  try {
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+    if (!deletedBook) {
+      res.status(404).json({
         success: false,
-        message: "Error deleting book",
-        error: error instanceof Error ? error.message : "Unknown error",
-        });
+        message: "Book not found",
+      });
     }
-    }
-);
+    res.status(200).json({
+      success: true,
+      message: "Book deleted successfully",
+      data: deletedBook,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting book",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});

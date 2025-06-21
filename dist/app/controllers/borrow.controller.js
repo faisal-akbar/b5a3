@@ -22,6 +22,7 @@ exports.borrowRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, f
     if (!parseBody.success) {
         const errorResponse = (0, formatZodError_1.formatZodError)(parseBody.error, req.body);
         res.status(400).json(errorResponse);
+        return;
     }
     try {
         const { book, quantity, dueDate } = parseBody.data;

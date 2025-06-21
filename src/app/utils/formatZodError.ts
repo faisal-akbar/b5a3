@@ -5,7 +5,6 @@ export function formatZodError(error: ZodError, source: any) {
   const errors: Record<string, any> = {};
 
   for (const issue of error.errors) {
-    console.log(issue);
     const field = issue.path[0];
     const properties: Record<string, any> = {
       message: issue.message,

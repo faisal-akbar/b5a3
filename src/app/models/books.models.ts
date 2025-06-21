@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IBooks, IBookStaticMethod } from "../interfaces/books.interface";
+import { GENRES } from "../schemas/books.schema";
 
 const bookSchema = new Schema<IBooks, IBookStaticMethod>(
   {
@@ -15,14 +16,7 @@ const bookSchema = new Schema<IBooks, IBookStaticMethod>(
     },
     genre: {
       type: String,
-      enum: [
-        "FICTION",
-        "NON_FICTION",
-        "SCIENCE",
-        "HISTORY",
-        "BIOGRAPHY",
-        "FANTASY",
-      ],
+      enum: GENRES,
       required: true,
     },
     isbn: {

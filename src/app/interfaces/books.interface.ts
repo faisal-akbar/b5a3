@@ -1,10 +1,11 @@
 import { Model } from "mongoose";
+import { GENRES } from "../schemas/books.schema";
 
-
+type Genre = typeof GENRES[number];
 export interface IBooks {
     title: string;  
     author: string;
-    genre: "FICTION" | "NON_FICTION" | "SCIENCE" | "HISTORY" | "BIOGRAPHY" | "FANTASY";
+    genre: Genre;
     isbn: string;
     description: string;
     copies: number;

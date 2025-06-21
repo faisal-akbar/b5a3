@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
 const mongoose_1 = require("mongoose");
+const books_schema_1 = require("../schemas/books.schema");
 const bookSchema = new mongoose_1.Schema({
     title: {
         type: String,
@@ -24,14 +25,7 @@ const bookSchema = new mongoose_1.Schema({
     },
     genre: {
         type: String,
-        enum: [
-            "FICTION",
-            "NON_FICTION",
-            "SCIENCE",
-            "HISTORY",
-            "BIOGRAPHY",
-            "FANTASY",
-        ],
+        enum: books_schema_1.GENRES,
         required: true,
     },
     isbn: {

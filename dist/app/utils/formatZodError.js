@@ -4,7 +4,6 @@ exports.formatZodError = formatZodError;
 function formatZodError(error, source) {
     const errors = {};
     for (const issue of error.errors) {
-        console.log(issue);
         const field = issue.path[0];
         const properties = {
             message: issue.message,

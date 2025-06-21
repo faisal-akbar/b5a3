@@ -14,6 +14,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
   if (!parseBody.success) {
     const errorResponse = formatZodError(parseBody.error, req.body);
     res.status(400).json(errorResponse);
+    return;
   }
   try {
     const { book, quantity, dueDate } = parseBody.data as IBorrowCreate

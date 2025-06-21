@@ -2,11 +2,20 @@ import { isMongoId } from "validator";
 import { z } from "zod";
 import { Book } from "../models/books.models";
 
+export const GENRES = [
+  "FICTION",
+  "NON_FICTION",
+  "SCIENCE",
+  "HISTORY",
+  "BIOGRAPHY",
+  "FANTASY",
+] as const;
+
 const baseBookSchema = z.object({
   title: z.string().min(1, "Title is required"),
   author: z.string().min(1, "Author is required"),
   genre: z.enum(
-    ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"],
+    GENRES,
     {
       message: "Genre must be one of the predefined values",
     }
@@ -62,10 +71,9 @@ export const bookUpdateSchema = baseBookSchema.partial().superRefine((data, ctx)
 
 export const querySchema = z.object({
   filter: z.string().optional().refine((val) => {
-    const validGenres = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"]
-    return !val || validGenres.includes(val.toUpperCase());
+    return !val || GENRES.includes(val.toUpperCase() as typeof GENRES[number]);
   }, {
-    message: "Filter must be one of the predefined genres or empty",
+    message: `Filter must be one of the predefined genres: ${GENRES.join(", ")}`,
   }),
   sortBy: z.string().optional(),
   sort: z.enum(["asc", "desc"]),
