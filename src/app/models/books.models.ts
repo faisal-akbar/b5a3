@@ -47,7 +47,13 @@ const bookSchema = new Schema<IBooks, IBookStaticMethod>(
 );
 
 // Static Method to update the available status based on copies
-bookSchema.static("updateAvailableStatus", async function (book) {
+bookSchema.static("updateBookCopiesAndAvailable", async function (book, quantity) {
+  // Deduct the requested quantity from the book’s copies.
+  if (quantity > book.copies) {
+    throw new Error("Not enough copies available");
+  }
+  book.copies -= quantity;
+  // Update the available status based on the new copies count.
   book.available = book.copies > 0;
   await book.save();
 });

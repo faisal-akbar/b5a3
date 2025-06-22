@@ -20,5 +20,5 @@ export interface IReqQuery {
 }
 
 export interface IBookStaticMethod extends Model<IBooks> {
-  updateAvailableStatus(book: IBooks): void
+  updateBookCopiesAndAvailable(book: IBooks, quantity: number): void
 }

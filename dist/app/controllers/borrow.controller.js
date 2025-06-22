@@ -43,10 +43,8 @@ exports.borrowRoutes.post("/", (req, res) => __awaiter(void 0, void 0, void 0, f
             });
             return;
         }
-        // Deduct the requested quantity from the book’s copies.
-        bookRecord.copies -= quantity;
-        // If copies become 0, update available to false
-        books_models_1.Book.updateAvailableStatus(bookRecord);
+        // update copies and available status
+        books_models_1.Book.updateBookCopiesAndAvailable(bookRecord, quantity);
         // Save the borrow record with all relevant details.
         const borrow = yield borrow_models_1.Borrow.create({
             book: bookRecord._id,

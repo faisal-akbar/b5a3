@@ -53,8 +53,14 @@ const bookSchema = new mongoose_1.Schema({
     timestamps: true,
 });
 // Static Method to update the available status based on copies
-bookSchema.static("updateAvailableStatus", function (book) {
+bookSchema.static("updateBookCopiesAndAvailable", function (book, quantity) {
     return __awaiter(this, void 0, void 0, function* () {
+        // Deduct the requested quantity from the book’s copies.
+        if (quantity > book.copies) {
+            throw new Error("Not enough copies available");
+        }
+        book.copies -= quantity;
+        // Update the available status based on the new copies count.
         book.available = book.copies > 0;
         yield book.save();
     });

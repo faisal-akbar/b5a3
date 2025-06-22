@@ -37,11 +37,9 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
       });
       return;
     }
-    // Deduct the requested quantity from the book’s copies.
-    bookRecord.copies -= quantity;
-  
-    // If copies become 0, update available to false
-    Book.updateAvailableStatus(bookRecord);
+      
+    // update copies and available status
+    Book.updateBookCopiesAndAvailable(bookRecord, quantity);
 
     // Save the borrow record with all relevant details.
     const borrow = await Borrow.create({
